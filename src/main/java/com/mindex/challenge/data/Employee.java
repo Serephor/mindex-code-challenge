@@ -9,6 +9,7 @@ public class Employee {
     private String position;
     private String department;
     private List<Employee> directReports;
+    private Compensation compensation;
 
     public Employee() {
     }
@@ -59,5 +60,24 @@ public class Employee {
 
     public void setDirectReports(List<Employee> directReports) {
         this.directReports = directReports;
+    }
+
+    /*
+        Added compensation within the employee object, as each employee would have a form of compensation
+        also this way it is easily expandable in the compensation package if there were to be the additions of:
+         - healthcare
+         - dental
+         - insurance
+         - etc, etc
+
+         This way everything can remain under a singular "compensation object" rather than having to refactor employee
+         later down the line
+     */
+    public Compensation getCompensation() {
+        return compensation;
+    }
+
+    public void setCompensation(Compensation compensation) {
+        this.compensation = compensation;
     }
 }
