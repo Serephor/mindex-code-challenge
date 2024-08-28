@@ -1,3 +1,50 @@
+# Notes and Thoughts
+
+## Task 1
+I outlined a bit of my thoughts in the various comments throughout the code but figured it might be beneficial to have
+everything all in one central place for reference.
+
+This problem is definitely one that I wish I would be able to talk with a product owner on to solve, as the current
+implementation is built around recursion, which is fine and elegant even for navigating tree structures such as this.
+But I would have definitely liked to iron out expectations with a product owner beforehand to see if I could implement
+this in a better way to suit the needs of the end user.
+
+While a recursive solution is the easiest to implement, in my comments I noted how I would have liked to talk with end
+consumers about how much this sort of thing might be called and how deep the tree might go. If the requirements were not
+to have this computed on the fly - I would like to offer another solution that I think is equally valid:
+
+Add a number of reports field directly onto the Employee.
+Update this on an ad hoc basis when either a new employee gets added, or a current employee is moved around.
+
+This way we are updating the value only when needed, and it is on the employee object directly improving read speed and
+decreasing the stack intensity.
+
+To allow for the functionality of the structure to remain it could be turned into a static class, as it no longer needs
+to store data, but rather return the full json structure for other services to use.
+
+It is an alternative approach, but I do think there is some value in considering alternatives.
+
+## Task 2
+And this task is why it took a bit longer than I would have wanted.
+The read request was easy, but my first implementation wanted to update with two inputs being passed in. An ID and the
+Compensation object to add to the Employee ID.
+
+I know this is possible by adding both to headers of the request and I believe I had most of it sorted out, but the main
+issue I ran into this implementation was during the testing phase.
+
+I went on an API deep dive into the TestRestTemplate and how to properly build a URI for the .exchange() method. It ate
+up a lot of the time that I spent and is for sure one of those situations that I miss being able to tap another developer
+on the shoulder to ask a quick question and continue on my way. That is one of those situations I also miss as I know my
+skillset leans towards algorithms, optimization, and accessibility - and I was sorely missing being able to collab or
+pair program with another developer to quickly fix those knowledge gaps, providing a better and faster solution for
+everyone.
+
+Regardless, I ended up passing a whole Employee with the ID and Compensation object to solve such a problem, modelled
+after the employee update implementation. I would like to talk more about the other solution through if you would have
+the time to do so - just to fill in my knowledge gap a bit for the future.
+ 
+# ------------------- BELOW IS THE ORIGINAL README CONTENTS FOR RECORD KEEPING --------------------
+
 # Coding Challenge
 ## What's Provided
 A simple [Spring Boot](https://projects.spring.io/spring-boot/) web application has been created and bootstrapped with data. The application contains 
