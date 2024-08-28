@@ -26,13 +26,19 @@ public class EmployeeController {
         return employeeService.create(employee);
     }
 
+    /*
+    Copy and paste error in the logs to fix here
+     */
     @GetMapping("/employee/{id}")
     public Employee read(@PathVariable String id) {
-        LOG.debug("Received employee create request for id [{}]", id);
+        LOG.debug("Received employee read request for id [{}]", id);
 
         return employeeService.read(id);
     }
 
+    /*
+    I believe this was also an error to fix in the logs - just for clarity over what endpoint is being hit
+     */
     @PutMapping("/employee/{id}")
     public Employee update(@PathVariable String id, @RequestBody Employee employee) {
         LOG.debug("Received employee update request for id [{}] and employee [{}]", id, employee);

@@ -29,4 +29,7 @@ public class ReportingStructure {
     public void setNumberOfReports(int numberOfReports) {
         this.numberOfReports = numberOfReports;
     }
+
+    // As this is meant to be done and use on an ad hoc basis - I omitted a builder here, see notes In Employee on
+    // why I would create a builder if this was stored data.
 }

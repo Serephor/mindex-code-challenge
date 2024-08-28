@@ -3,11 +3,8 @@ package com.mindex.challenge;
 import com.mindex.challenge.data.Compensation;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.data.ReportingStructure;
-import com.mindex.challenge.service.CompensationService;
 import com.mindex.challenge.service.EmployeeService;
 import com.mindex.challenge.service.ReportingStructureService;
-import com.mindex.challenge.service.impl.EmployeeServiceImplTest;
-import com.mindex.challenge.service.impl.ReportingStructureServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,13 +17,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,8 +31,6 @@ public class ChallengeApplicationTests {
 	private String reportingStructureURL;
 	private String compensationUrl;
 	private String employeeUrl;
-	private String compensationUpdateUrl;
-	private String employeeIdUrl;
 
 	@Autowired
 	private EmployeeService employeeService;
@@ -55,7 +46,6 @@ public class ChallengeApplicationTests {
 	public void setup() {
 		reportingStructureURL = "http://localhost:" + port + "/reportingStructure/{id}";
 		compensationUrl = "http://localhost:" + port + "/compensation/{id}";
-		compensationUpdateUrl = "http://localhost:" + port + "/compensation/";
 		employeeUrl = "http://localhost:" + port + "/employee";
 	}
 
@@ -109,14 +99,52 @@ public class ChallengeApplicationTests {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		Compensation updatedCompensation = restTemplate.exchange(compensationUrl,
-				HttpMethod.PUT,
-				new HttpEntity<Compensation>(readCompensation, headers),
-				Compensation.class,
-				createdEmployee.getEmployeeId()).getBody();
+		Compensation updatedCompensation =
+				restTemplate.exchange(compensationUrl,
+						HttpMethod.PUT,
+						new HttpEntity<Compensation>(readCompensation, headers),
+						Compensation.class,
+						createdEmployee.getEmployeeId()).getBody();
 
 		assertEquals(readCompensation.getSalary(), updatedCompensation.getSalary());
 		assertEquals(readCompensation.getEffectiveDate(), updatedCompensation.getEffectiveDate());
+	}
+
+	@Test
+	public void testCompensationCreateReadUpdate_BadInputs() {
+		Employee testEmployee = new Employee();
+		testEmployee.setFirstName("John");
+		testEmployee.setLastName("Doe");
+		testEmployee.setDepartment("Engineering");
+		testEmployee.setPosition("Developer");
+		testEmployee.setEmployeeId("Very Improper UUID that is bad");
+
+		Compensation testCompensation = new Compensation();
+		testCompensation.setSalary(BigDecimal.valueOf(65000.00));
+		testCompensation.setEffectiveDate(LocalDate.of(2024, 9, 1));
+		testEmployee.setCompensation(testCompensation);
+
+		// Read checks
+		Compensation readCompensation = restTemplate.getForEntity(compensationUrl, Compensation.class, testEmployee.getEmployeeId()).getBody();
+		assertEquals(null, readCompensation.getSalary());
+		assertEquals(null, readCompensation.getEffectiveDate());
+
+		// Update checks
+		readCompensation.setSalary(BigDecimal.valueOf(90000.00));
+		readCompensation.setEffectiveDate(LocalDate.of(2035, 5, 25));
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Compensation updatedCompensation =
+				restTemplate.exchange(compensationUrl,
+						HttpMethod.PUT,
+						new HttpEntity<Compensation>(readCompensation, headers),
+						Compensation.class,
+						testEmployee.getEmployeeId()).getBody();
+
+		assertEquals(null, updatedCompensation.getSalary());
+		assertEquals(null, updatedCompensation.getEffectiveDate());
 	}
 
 	private static void assertEmployeeEquivalence(Employee expected, Employee actual) {
@@ -124,6 +152,8 @@ public class ChallengeApplicationTests {
 		assertEquals(expected.getLastName(), actual.getLastName());
 		assertEquals(expected.getDepartment(), actual.getDepartment());
 		assertEquals(expected.getPosition(), actual.getPosition());
+		// These two lines are holdovers from when I was trying to get the update method to return an employee object
+		// rather than a compensation object. I still find this valuable though and will keep it for future additons.
 		assertEquals(expected.getCompensation().getSalary(), actual.getCompensation().getSalary());
 		assertEquals(expected.getCompensation().getEffectiveDate(), actual.getCompensation().getEffectiveDate());
 	}

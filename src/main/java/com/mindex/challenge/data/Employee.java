@@ -54,6 +54,13 @@ public class Employee {
         this.department = department;
     }
 
+    /*
+     Something about the reporting structure that I would like to consider for the future -
+     It was mentioned that the calls to get the reporting structure should be computed on the fly in the README
+     I would like to ask if it is possible to pre-compute the size and store it within the database.
+     Depending on how many calls reporting structure gets (I cannot imagine too many, but it would be good to check)
+     it could be an opportunity to save on time and resources.
+     */
     public List<Employee> getDirectReports() {
         return directReports;
     }

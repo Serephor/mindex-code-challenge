@@ -8,9 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ReportingStructureServiceImpl implements ReportingStructureService {
@@ -19,6 +17,10 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    /*
+    Check to find employee and if it is valid - then continue
+    Create a reporting structure with the employee and then recursively find the number of reports
+     */
     @Override
     public ReportingStructure read(String id) {
         LOG.debug("Reading reporting structure of employee with id [{}]", id);
@@ -37,9 +39,13 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
         return reportingStructure;
     }
 
+    /*
+    Another reason I would like to consider precomputing the reporting structure would to possibly prevent a stack
+    overflow, as this is a recursive method it can be stack intensive if the tree gets too deep. More food for thought
+    that I would like to talk over with the product owner and consumer.
+     */
     private int recurseTotalReports(Employee employee) {
         List<Employee> directReports = employee.getDirectReports();
-
 
         // Check to see if the current employee has anyone that reports to them
         // If they don't, they have no direct reporters and thus return 0

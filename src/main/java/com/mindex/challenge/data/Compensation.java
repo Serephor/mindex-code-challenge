@@ -30,4 +30,13 @@ public class Compensation {
     public void setEffectiveDate(LocalDate effectiveDate) {
         this.effectiveDate = effectiveDate;
     }
+
+    //Builder, we can modify this down the line based on other additions to the compensation package
+    // - as well as validation
+    public static Compensation createCompensation(BigDecimal salary, LocalDate effectiveDate) {
+        Compensation retComp = new Compensation();
+        retComp.setSalary(salary);
+        retComp.setEffectiveDate(effectiveDate);
+        return retComp;
+    }
 }

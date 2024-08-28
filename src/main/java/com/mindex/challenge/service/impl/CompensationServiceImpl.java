@@ -16,7 +16,11 @@ public class CompensationServiceImpl implements CompensationService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-
+    /*
+    Find employee, if employee is null throw an error
+    otherwise get the compensation object of the found employee
+    modeled after EmployeeServiceImpl.read for consistency
+     */
     @Override
     public Compensation read(String id) {
         LOG.debug("Reading compensation with id [{}]", id);
@@ -30,11 +34,23 @@ public class CompensationServiceImpl implements CompensationService {
         return employee.getCompensation();
     }
 
+    /*
+    Find employee using a passed ID and compensation package
+    If employee exists replace it with the passed compensation package
+    then return the compensation package
+    To see further thoughts on this endpoint and an alternative implementation I would want to do if I could talk to
+    another dev, see Compensation.java
+     */
     @Override
     public Compensation update(Employee employee) {
         LOG.debug("Updating employee with new compensation [{}]", employee);
 
         Employee found = employeeRepository.findByEmployeeId(employee.getEmployeeId());
+
+        if (found == null) {
+            throw new RuntimeException("Invalid employee object to update: " + employee.getEmployeeId());
+        }
+
         found.setCompensation(employee.getCompensation());
         employeeRepository.save(found);
 
